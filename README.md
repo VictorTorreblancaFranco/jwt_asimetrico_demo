@@ -1,52 +1,34 @@
-# Demo JWT asimétrico: Spring WebFlux + RS256 + JWE
+# JWT asimétrico: demo con frontend y backend
 
-Miniaplicación para la exposición. Simula dos backends en un mismo proceso:
+Aplicación para demostrar comunicación segura entre `Pedidos` y `Facturación` usando RS256, JWE y validación de claims.
 
-- `pedidos` emite un JWT firmado con RS256 y lo cifra como JWE.
-- `facturacion` descifra el JWE, verifica la firma y valida `iss`, `aud` y `exp`.
+## Ejecutar todo con Docker
 
-## Ejecutar con Docker, recomendado para la exposición
-
-Requisitos: Docker Desktop.
+Requisito: Docker Desktop.
 
 ```bash
 docker compose up --build
 ```
 
-La API quedará disponible en `http://localhost:8080`. Para detenerla:
+Abrir el frontend en [http://localhost:5500](http://localhost:5500).
 
-```bash
-docker compose down
-```
+- `frontend/`: interfaz para generar y probar tokens.
+- `backend/`: API Spring WebFlux con Nimbus JOSE + JWT.
+- `docker-compose.yml`: levanta ambos servicios.
 
 ## Ejecutar sin Docker
 
-Requisitos: Java 17+ y Maven 3.9+.
+Terminal 1:
 
 ```bash
+cd backend
 mvn spring-boot:run
 ```
 
-En otra terminal:
+Terminal 2:
 
 ```bash
-TOKEN=$(curl -s -X POST 'http://localhost:8080/demo/pedidos/token?seconds=60' | jq -r .token)
-curl -i -X POST http://localhost:8080/demo/facturacion/procesar -H "Authorization: Bearer $TOKEN"
+npx --yes serve frontend -l 5500
 ```
 
-Debe responder `201 Created`. Para probar expiración, soliciten `seconds=1`, esperen dos segundos y envíen el token: responderá `401 Unauthorized`. Para probar alteración, cambien un carácter del token. El ejemplo usa claves RSA efímeras para la clase; en producción deben almacenarse en un gestor de secretos y rotarse.
-
-## Casos que deben mostrar
-
-| Caso | Resultado |
-|---|---|
-| Token válido | `201 Created` |
-| Token alterado | `401 Unauthorized` |
-| Token expirado | `401 Unauthorized` |
-| Permiso insuficiente | `403 Forbidden` |
-
-La aplicación representa dos roles dentro de un proyecto pequeño: `pedidos` emite el token y `facturacion` lo descifra y valida. Esto permite demostrar el flujo sin instalar dos proyectos separados.
-
-## Qué explicar
-
-RS256 prueba origen e integridad. JWE protege la confidencialidad. HTTPS sigue siendo obligatorio en un entorno real.
+Abrir `http://localhost:5500`.

@@ -1,7 +1,15 @@
 services:
-  jwt-demo:
-    build: .
+  backend:
+    build: ./backend
     container_name: jwt-asimetrico-demo
     ports:
       - "8080:8080"
+    restart: unless-stopped
+  frontend:
+    build: ./frontend
+    container_name: jwt-asimetrico-frontend
+    ports:
+      - "5500:80"
+    depends_on:
+      - backend
     restart: unless-stopped

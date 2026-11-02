@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Demo JWT asimétrico</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <p class="eyebrow">Seguridad entre servicios backend</p>
+      <h1>JWT asimétrico</h1>
+      <p>Pedidos firma y cifra el mensaje. Facturación lo descifra, verifica y decide si puede procesarlo.</p>
+    </header>
+
+    <section class="flow" aria-label="Flujo de la demostración">
+      <div><strong>Pedidos</strong><span>firma RS256</span></div><b>→</b>
+      <div><strong>JWE</strong><span>protege el contenido</span></div><b>→</b>
+      <div><strong>Facturación</strong><span>valida claims</span></div>
+    </section>
+
+    <section class="grid">
+      <article class="panel controls">
+        <div class="panel-heading"><div><p class="eyebrow">Servicio A</p><h2>Pedidos</h2></div><span class="status-dot"></span></div>
+        <label for="seconds">Duración del token</label>
+        <div class="duration"><input id="seconds" type="number" min="1" value="60"><span>segundos</span></div>
+        <button id="generate" class="primary">Generar token</button>
+        <p class="hint">El token se firma con RS256 y se cifra como JWE.</p>
+        <label for="token">Token generado</label>
+        <textarea id="token" placeholder="Aquí aparecerá el token..." spellcheck="false"></textarea>
+        <div class="actions"><button id="valid">Enviar válido</button><button id="tamper">Alterar token</button><button id="expired">Generar expirado</button></div>
+      </article>
+
+      <article class="panel result-panel">
+        <div class="panel-heading"><div><p class="eyebrow">Servicio B</p><h2>Facturación</h2></div><span id="result-dot" class="status-dot neutral"></span></div>
+        <div id="result" class="result neutral"><span class="result-code">--</span><div><strong>Esperando una prueba</strong><p>Genera un token y envíalo al servicio.</p></div></div>
+        <div class="checks"><div><span>Firma RS256</span><b id="check-sign">—</b></div><div><span>Cifrado JWE</span><b id="check-encrypt">—</b></div><div><span>Claims y permisos</span><b id="check-claims">—</b></div></div>
+        <pre id="response">La respuesta del backend aparecerá aquí.</pre>
+      </article>
+    </section>
+
+    <footer>Demo académica · Spring WebFlux · Nimbus JOSE + JWT</footer>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
